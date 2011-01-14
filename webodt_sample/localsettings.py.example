@@ -1,0 +1,21 @@
+# -*- coding: utf-8 -*-
+
+# default converter
+WEBODT_CONVERTER = 'webodt.converters.abiword.AbiwordODFConverter'
+# acceptable variants are:
+# 'webodt.converters.abiword.AbiwordODFConverter'
+# 'webodt.converters.googledocs.GoogleDocsODFConverter'
+# 'webodt.converters.openoffice.OpenOfficeODFConverter'
+
+WEBODT_TEMPLATE_PATH = '/full/path/to/templates/directory/'
+WEBODT_DEFAULT_FORMAT = 'doc'
+
+# AbiwordODFConverter setting. Abiword convert command. Usually default value
+# is acceptable
+WEBODT_ABIWORD_COMMAND = ['/usr/bin/abiword', '--plugin', 'AbiCommand']
+# GoogleDocsODFConverter settings. Google account requisites
+WEBODT_GOOGLEDOCS_EMAIL = 'myaccount@gmail.com'
+WEBODT_GOOGLEDOCS_PASSWORD = 'mypassword'
+# OpenOfficeODFConverter settings. Address of the OpenOffice server
+WEBODT_OPENOFFICE_SERVER = ('localhost', 2002)
+
