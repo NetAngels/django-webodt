@@ -4,6 +4,9 @@ from django.utils.importlib import import_module
 from webodt.conf import WEBODT_DEFAULT_FORMAT, WEBODT_CONVERTER
 
 def converter():
+    """ Create and return Converter instance
+    on a basis of ``WEBODT_CONVERTER`` settings variable
+    """
     try:
         module_name, class_name = WEBODT_CONVERTER.rsplit('.', 1)
     except ValueError: # need more than 1 value to unpack
@@ -18,6 +21,11 @@ class ODFConverter(object):
     """ Base class for all built-in converter backends """
 
     WEBODT_DEFAULT_FORMAT = 'doc'
+
+    def convert(self, document, format=None, output_filename=None, delete_on_close=True):
+        """ convert document and return file-like object representing output
+        document """
+        raise NotImplementedError("Should be implemented in subclass")
 
     def _guess_format_and_filename(self, filename, format):
         """ guess format and filename of the output document

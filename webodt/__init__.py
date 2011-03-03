@@ -18,10 +18,18 @@ from webodt.conf import WEBODT_TEMPLATE_PATH
 
 
 class ODFTemplate(object):
+    """
+    ODF template class
+    """
 
     _fake_timestamp = time.mktime((2010,1,1,0,0,0,0,0,0))
 
     def __init__(self, template_name):
+        """ Create object by the template name. The template name is relative
+        to ``WEBODT_TEMPLATE_PATH`` directory.
+
+        template_name: name of the template to load and handle
+        """
         self.template_name = template_name
         self.template_path = os.path.join(WEBODT_TEMPLATE_PATH, template_name)
         if os.path.isfile(self.template_path):
@@ -34,11 +42,12 @@ class ODFTemplate(object):
             raise ValueError('Template %s not found in directory %s' % (template_name, WEBODT_TEMPLATE_PATH))
 
     def get_content_xml(self):
+        """ Return the content.xml file contents """
         return self.handler.get_content_xml()
 
 
     def render(self, context, delete_on_close=True):
-        """ Return rendered ODF (ODFDocument instance)"""
+        """ Return rendered ODF (webodt.ODFDocument instance)"""
         # create temp output directory
         tmpdir = tempfile.mkdtemp()
         self.handler.unpack(tmpdir)
