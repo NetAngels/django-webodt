@@ -74,6 +74,17 @@ class HTMLDocumentTest(unittest.TestCase):
         document.delete()
         self.assertFalse(os.path.isfile(document.name))
 
+    def test_utf8(self):
+        template = webodt.HTMLTemplate('sample.html')
+        context = {
+            'username': u'Тест',
+            'balance': 10.01
+        }
+        document = template.render(Context(context), delete_on_close=True)
+        self.assertTrue(os.path.isfile(document.name))
+        self.assertTrue('Тест' in document.get_content()) # we compare bytes, not unicode symbols
+        document.delete()
+
 
 
 class _ConverterTest(object):

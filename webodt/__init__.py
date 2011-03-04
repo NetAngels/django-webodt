@@ -44,7 +44,7 @@ class HTMLTemplate(object):
         # create and return .html file
         _, tmpfile = tempfile.mkstemp(suffix='.html')
         fd = open(tmpfile, 'w')
-        fd.write(content)
+        fd.write(smart_str(content))
         fd.close()
         # return HTML document
         return HTMLDocument(tmpfile, delete_on_close=delete_on_close)
