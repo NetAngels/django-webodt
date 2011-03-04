@@ -47,8 +47,8 @@ class GoogleDocsODFConverter(ODFConverter):
             'GData-Version': '3.0',
             'Authorization': 'GoogleLogin auth=%s' % self.auth_token,
             'Content-Length': len(data),
-            'Content-Type': 'application/vnd.oasis.opendocument.text',
-            'Slug': '%s.odt' % uuid.uuid4(),
+            'Content-Type': document.content_type,
+            'Slug': '%s.%s' % (uuid.uuid4(), document.format),
         }
         request = urllib2.Request(url, data, headers)
         response = urllib2.urlopen(request)
@@ -80,6 +80,14 @@ class GoogleDocsODFConverter(ODFConverter):
         fd.close()
 
         # remove document from google docs
+        self._remove_document(resource_id)
+
+        # return document
+        fd = Document(output_filename, mode='r', delete_on_close=delete_on_close)
+        return fd
+
+    def _remove_document(self, resource_id):
+        # remove document from google docs
         url = 'https://docs.google.com/feeds/default/private/full/%s?delete=true' % resource_id
         headers = {
             'GData-Version': '3.0',
@@ -90,8 +98,3 @@ class GoogleDocsODFConverter(ODFConverter):
         response = urllib2.urlopen(request)
         data = response.read()
         response.close()
-
-        # return document
-        fd = Document(output_filename, mode='r', delete_on_close=delete_on_close)
-        return fd
-

@@ -24,10 +24,12 @@ class OpenOfficeODFConverter(ODFConverter):
         config = unosvcmgr.createInstanceWithContext('com.sun.star.configuration.ConfigurationProvider', unocontext)
         ### Load inputfile
         instream = InputStream(uno.ByteSequence(document.read()))
-        inputprops = (
+        inputprops = [
             PropertyValue('InputStream', 0, instream, 0),
-        )
-        doc = desktop.loadComponentFromURL('private:stream','_blank',0, inputprops)
+        ]
+        if document.format == 'html':
+            inputprops.append(PropertyValue('FilterName', 0, 'HTML (StarWriter)', 0))
+        doc = desktop.loadComponentFromURL('private:stream','_blank',0, tuple(inputprops))
         ### Update document links
         # skip ...
         ### Update document indexes

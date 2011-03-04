@@ -21,6 +21,11 @@ class ODFTemplateTest(unittest.TestCase):
         content = template.get_content_xml()
         self.assertTrue('{{ username }}' in content)
 
+    def test_html_template(self):
+        template = webodt.HTMLTemplate('sample.html')
+        content = template.get_content()
+        self.assertTrue('{{ username }}' in content)
+
 
 class ODFDocumentTest(unittest.TestCase):
 
@@ -36,6 +41,7 @@ class ODFDocumentTest(unittest.TestCase):
         }
         document = template.render(Context(context))
         self.assertTrue(os.path.isfile(document.name))
+        self.assertEqual(document.format, 'odt')
         self.assertTrue('John Doe' in document.get_content_xml())
         document.delete()
         self.assertFalse(os.path.isfile(document.name))
@@ -52,16 +58,35 @@ class ODFDocumentTest(unittest.TestCase):
         self.assertFalse(os.path.isfile(document.name))
 
 
-class AbiwordODFConverterTest(unittest.TestCase):
 
-    def test_converter(self):
-        template = webodt.ODFTemplate('sample.odt')
+class HTMLDocumentTest(unittest.TestCase):
+
+    def test_file(self):
+        template = webodt.HTMLTemplate('sample.html')
         context = {
             'username': 'John Doe',
             'balance': 10.01
         }
-        document = template.render(Context(context))
-        converter = AbiwordODFConverter()
+        document = template.render(Context(context), delete_on_close=True)
+        self.assertTrue(os.path.isfile(document.name))
+        self.assertEqual(document.format, 'html')
+        self.assertTrue('John Doe' in document.get_content())
+        document.delete()
+        self.assertFalse(os.path.isfile(document.name))
+
+
+
+class _ConverterTest(object):
+    context = {
+        'username': 'John Doe',
+        'balance': 10.01
+    }
+    Converter = None
+
+    def test_converter(self):
+        template = webodt.ODFTemplate('sample.odt')
+        document = template.render(Context(self.context))
+        converter = self.Converter()
         html_document = converter.convert(document, 'html')
         html_data = html_document.read()
         self.assertTrue('John Doe' in html_data)
@@ -70,40 +95,25 @@ class AbiwordODFConverterTest(unittest.TestCase):
         self.assertFalse(os.path.isfile(document.name))
         self.assertFalse(os.path.isfile(html_document.name))
 
-
-class GoogleDocsODFConverterTest(unittest.TestCase):
-
-    def test_converter(self):
-        template = webodt.ODFTemplate('sample.odt')
-        context = {
-            'username': 'John Doe',
-            'balance': 10.01
-        }
-        document = template.render(Context(context))
-        converter = GoogleDocsODFConverter()
-        html_document = converter.convert(document, 'html')
-        html_data = html_document.read()
-        self.assertTrue('John Doe' in html_data)
+    def test_html_converter(self):
+        template = webodt.HTMLTemplate('sample.html')
+        document = template.render(Context(self.context), delete_on_close=False)
+        converter = self.Converter()
+        odt_document = converter.convert(document, 'odt', delete_on_close=False)
+        odt_document2 = webodt.ODFDocument(odt_document.name, delete_on_close=False)
+        self.assertTrue('John' in odt_document2.get_content_xml())
         document.close()
-        html_document.close()
-        self.assertFalse(os.path.isfile(document.name))
-        self.assertFalse(os.path.isfile(html_document.name))
+        document.delete()
+        odt_document.close()
+        odt_document.delete()
+
+class AbiwordODFConverterTest(_ConverterTest, unittest.TestCase):
+    Converter = AbiwordODFConverter
 
 
-class OpenOfficeODFConverterTest(unittest.TestCase):
+class GoogleDocsODFConverterTest(_ConverterTest, unittest.TestCase):
+    Converter = GoogleDocsODFConverter
 
-    def test_converter(self):
-        template = webodt.ODFTemplate('sample.odt')
-        context = {
-            'username': 'John Doe',
-            'balance': 10.01
-        }
-        document = template.render(Context(context))
-        converter = OpenOfficeODFConverter()
-        html_document = converter.convert(document, 'html')
-        html_data = html_document.read()
-        self.assertTrue('John Doe' in html_data)
-        document.close()
-        html_document.close()
-        self.assertFalse(os.path.isfile(document.name))
-        self.assertFalse(os.path.isfile(html_document.name))
+
+class OpenOfficeODFConverterTest(_ConverterTest, unittest.TestCase):
+    Converter = OpenOfficeODFConverter

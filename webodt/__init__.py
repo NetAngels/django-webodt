@@ -17,11 +17,45 @@ from django.utils.encoding import smart_str
 from webodt.conf import WEBODT_TEMPLATE_PATH
 
 
+class HTMLTemplate(object):
+    """ HTML template class """
+    format = 'html'
+    content_type = 'text/html'
+
+    def __init__(self, template_name):
+        """ Create object by the template name. The template name is relative
+        to ``WEBODT_TEMPLATE_PATH`` directory. """
+        self.template_name = template_name
+        self.template_path = os.path.join(WEBODT_TEMPLATE_PATH, template_name)
+        if not os.path.isfile(self.template_path):
+            raise ValueError('Template %s not found in directory %s' % (template_name, WEBODT_TEMPLATE_PATH))
+
+    def get_content(self):
+        fd = open(self.template_path, 'r')
+        content = fd.read()
+        fd.close()
+        return content
+
+    def render(self, context, delete_on_close=True):
+        """ Return rendered HTML (webodt.HTMLDocument instance) """
+        # get rendered content
+        template = Template(self.get_content())
+        content = template.render(context)
+        # create and return .html file
+        _, tmpfile = tempfile.mkstemp(suffix='.html')
+        fd = open(tmpfile, 'w')
+        fd.write(content)
+        fd.close()
+        # return HTML document
+        return HTMLDocument(tmpfile, delete_on_close=delete_on_close)
+
 class ODFTemplate(object):
     """
     ODF template class
     """
 
+    format = 'odt'
+    content_type = 'application/vnd.oasis.opendocument.text'
     _fake_timestamp = time.mktime((2010,1,1,0,0,0,0,0,0))
 
     def __init__(self, template_name):
@@ -123,7 +157,20 @@ class Document(file):
             self.delete()
 
 
+class HTMLDocument(Document):
+    format = 'html'
+    content_type = 'text/html'
+
+    def get_content(self):
+        fd = open(self.name, 'r')
+        content = fd.read()
+        fd.close()
+        return content
+
+
 class ODFDocument(Document):
+    format = 'odt'
+    content_type = 'application/vnd.oasis.opendocument.text'
 
     def get_content_xml(self):
         fd = zipfile.ZipFile(self.name)
