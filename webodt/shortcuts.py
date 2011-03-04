@@ -25,7 +25,7 @@ def render_to(format, template_name, dictionary=None, context_instance=None, del
     ``delete_on_close`` defines whether the returned document should be deleted
     automatically when closed.
     """
-    template = webodt.ODFTemplate(template_name)
+    template = _Template(template_name)
     dictionary = dictionary or {}
     if context_instance:
         context_instance.update(dictionary)
@@ -61,6 +61,12 @@ def render_to_response(template_name,
         filename += '.%s' % format
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
     return response
+
+
+def _Template(template_name):
+    if template_name.endswith('.html'):
+        return webodt.HTMLTemplate(template_name)
+    return webodt.ODFTemplate(template_name)
 
 
 def _ifile(fd, chunk_size=1024, close_on_exit=True):
