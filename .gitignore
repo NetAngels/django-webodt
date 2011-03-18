@@ -4,3 +4,4 @@
 .settings
 django_webodt.egg-info
 localsettings.py
+doc/_build
