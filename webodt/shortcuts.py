@@ -12,18 +12,21 @@ import webodt
 def render_to(format, template_name, dictionary=None, context_instance=None, delete_on_close=True,
               cache=CacheManager):
     """
-    Convert the template given by ``template_name`` and ``dictionary`` to a
-    document in given ``format``. The document (file-like object) will be
+    Convert the template given by `template_name` and `dictionary` to a
+    document in given `format`. The document (file-like object) will be
     returned.
 
-    ``format`` is the filename extension. It's possible to use "odt", "pdf",
+    `format` is the filename extension. It's possible to use "odt", "pdf",
     "doc", "html" or "rtf" and probably more.
 
-    ``context_instance`` is the optional parameter which should contain
-    instance of the subclass of ``django.template.Context``.
+    `context_instance` is the optional parameter which should contain
+    instance of the subclass of `django.template.Context`.
 
-    ``delete_on_close`` defines whether the returned document should be deleted
+    `delete_on_close` defines whether the returned document should be deleted
     automatically when closed.
+
+    If the `template_name` ends with `.html`, template is considered as HTML
+    template, otherwise as ODF based template.
     """
     template = _Template(template_name)
     dictionary = dictionary or {}
@@ -48,7 +51,7 @@ def render_to(format, template_name, dictionary=None, context_instance=None, del
 def render_to_response(template_name,
         dictionary=None, context_instance=None, filename=None, format='odt', cache=CacheManager):
     """
-    Using same options as ``render_to``, return ``django.http.HttpResponse``
+    Using same options as `render_to`, return `django.http.HttpResponse`
     object. The document is automatically removed when the last byte of the
     response is read.
     """
