@@ -1,11 +1,11 @@
 # -*- coding: utf8 -*-
 import os
-import mimetypes
 
 from django.http import HttpResponse
 from django.template import Context
 from webodt.cache import CacheManager
 from webodt.converters import converter
+from webodt.helpers import get_mimetype
 
 import webodt
 
@@ -55,7 +55,7 @@ def render_to_response(template_name,
     object. The document is automatically removed when the last byte of the
     response is read.
     """
-    mimetype = _get_mimetype(format)
+    mimetype = get_mimetype(format)
     content_fd = render_to(format, template_name, dictionary, context_instance,
                            delete_on_close=True, cache=cache)
     response = HttpResponse(_ifile(content_fd), mimetype=mimetype)
@@ -81,12 +81,3 @@ def _ifile(fd, chunk_size=1024, close_on_exit=True):
             break
         else:
             yield data
-
-
-def _get_mimetype(format):
-    ext = '.%s' % format
-    map = mimetypes.types_map.copy()
-    map['.odt'] = 'application/vnd.oasis.opendocument.text'
-    map['.rtf'] = 'text/richtext'
-    mimetype = map[ext]
-    return mimetype
