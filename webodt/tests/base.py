@@ -2,7 +2,6 @@
 import os
 import unittest
 import webodt
-from cStringIO import StringIO
 from django.template import Context
 from webodt.converters.abiword import AbiwordODFConverter
 from webodt.converters.openoffice import OpenOfficeODFConverter
@@ -58,7 +57,6 @@ class ODFDocumentTest(unittest.TestCase):
         self.assertFalse(os.path.isfile(document.name))
 
 
-
 class HTMLDocumentTest(unittest.TestCase):
 
     def test_file(self):
@@ -84,7 +82,6 @@ class HTMLDocumentTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(document.name))
         self.assertTrue('Тест' in document.get_content()) # we compare bytes, not unicode symbols
         document.delete()
-
 
 
 class _ConverterTest(object):

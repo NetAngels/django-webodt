@@ -14,7 +14,8 @@ import shutil
 import time
 from django.template import Template
 from django.utils.encoding import smart_str
-from webodt.conf import WEBODT_TEMPLATE_PATH
+from webodt.conf import WEBODT_TEMPLATE_PATH, WEBODT_ODF_TEMPLATE_PREPROCESSORS
+from webodt.preprocessors import list_preprocessors
 
 
 class HTMLTemplate(object):
@@ -49,6 +50,7 @@ class HTMLTemplate(object):
         # return HTML document
         return HTMLDocument(tmpfile, delete_on_close=delete_on_close)
 
+
 class ODFTemplate(object):
     """
     ODF template class
@@ -58,12 +60,15 @@ class ODFTemplate(object):
     content_type = 'application/vnd.oasis.opendocument.text'
     _fake_timestamp = time.mktime((2010,1,1,0,0,0,0,0,0))
 
-    def __init__(self, template_name):
+    def __init__(self, template_name, preprocessors=None):
         """ Create object by the template name. The template name is relative
         to ``WEBODT_TEMPLATE_PATH`` directory.
 
         template_name: name of the template to load and handle
         """
+        if not preprocessors:
+            preprocessors = WEBODT_ODF_TEMPLATE_PREPROCESSORS
+        self.preprocessors = preprocessors
         self.template_name = template_name
         self.template_path = os.path.join(WEBODT_TEMPLATE_PATH, template_name)
         if os.path.isfile(self.template_path):
@@ -79,14 +84,16 @@ class ODFTemplate(object):
         """ Return the content.xml file contents """
         return self.handler.get_content_xml()
 
-
     def render(self, context, delete_on_close=True):
         """ Return rendered ODF (webodt.ODFDocument instance)"""
         # create temp output directory
         tmpdir = tempfile.mkdtemp()
         self.handler.unpack(tmpdir)
         # store updated content.xml
-        template = Template(self.get_content_xml())
+        template_content = self.get_content_xml()
+        for preprocess_func in list_preprocessors(self.preprocessors):
+            template_content = preprocess_func(template_content)
+        template = Template(template_content)
         content_xml = template.render(context)
         content_filename = os.path.join(tmpdir, 'content.xml')
         content_fd = open(content_filename, 'w')
@@ -106,7 +113,6 @@ class ODFTemplate(object):
         shutil.rmtree(tmpdir)
         # return ODF document
         return ODFDocument(tmpfile, delete_on_close=delete_on_close)
-
 
 
 class _PackedODFHandler(object):
