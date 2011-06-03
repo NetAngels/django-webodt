@@ -9,13 +9,13 @@ class PreprocessorsTest(unittest.TestCase):
 
     def test_unquote_templatetags(self):
         content = unescape_templatetags(
-            u'{% if user == &quot;John Doe&quot; %}'
-            u'{% if balance &gt; 10.00 %}profit!{% endif %}'
+            u'{% if user == &quot;John Doe&quot; %}&lt;'
+            u'{% if balance &gt; 10.00 %}{{ &quot;profit!&quot; }}{% endif %}'
             u'{% endif %}'
         )
         self.assertEqual(content,
-            u'{% if user == "John Doe" %}'
-            u'{% if balance > 10.00 %}profit!{% endif %}'
+            u'{% if user == "John Doe" %}&lt;'
+            u'{% if balance > 10.00 %}{{ "profit!" }}{% endif %}'
             u'{% endif %}'
         )
 
