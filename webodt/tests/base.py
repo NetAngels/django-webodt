@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-import unittest
+from django.utils import unittest
 import webodt
 from django.template import Context
 from webodt.converters.abiword import AbiwordODFConverter

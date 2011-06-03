@@ -1,5 +1,5 @@
-import unittest
-#import webodt
+# -*- coding: utf8 -*-
+from django.utils import unittest
 from webodt.shortcuts import render_to, render_to_response
 
 class RenderToTest(unittest.TestCase):

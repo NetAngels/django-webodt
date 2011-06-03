@@ -10,5 +10,6 @@ WEBODT_OPENOFFICE_SERVER = getattr(settings, 'WEBODT_OPENOFFICE_SERVER', ('local
 WEBODT_CONVERTER = getattr(settings, 'WEBODT_CONVERTER', 'webodt.converters.abiword.AbiwordODFConverter')
 WEBODT_CACHE_DIR = getattr(settings, 'WEBODT_CACHE_DIR', '/tmp/webodt_cache')
 WEBODT_ODF_TEMPLATE_PREPROCESSORS = getattr(settings, 'WEBODT_ODF_TEMPLATE_PREPROCESSORS', [
-    'webodt.preprocessors.unescape_templatetags',
+    'webodt.preprocessors.xmlfor_preprocessor',
+    'webodt.preprocessors.unescape_templatetags_preprocessor',
 ])

@@ -15,6 +15,10 @@ setup(
     license = 'BSD License',
     description = u'ODF template handler and odt to html, pdf, doc, etc converter',
     long_description = open('README.rst').read().decode('utf8'),
+    install_requires = [
+        'Django',
+        'lxml',
+    ],
     classifiers=(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
