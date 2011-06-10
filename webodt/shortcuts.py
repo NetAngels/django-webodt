@@ -56,7 +56,7 @@ def render_to(format, template_name,
 
 def render_to_response(template_name,
         dictionary=None, context_instance=None, filename=None, format='odt',
-        cache=CacheManager, preprocessors=None
+        cache=CacheManager, preprocessors=None, inline=None
     ):
     """
     Using same options as `render_to`, return `django.http.HttpResponse`
@@ -71,7 +71,9 @@ def render_to_response(template_name,
     if not filename:
         filename = os.path.basename(template_name)
         filename += '.%s' % format
-    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    response['Content-Disposition'] = (
+        inline and 'inline' or 'attachment; filename="%s"' % filename
+    )
     return response
 
 
