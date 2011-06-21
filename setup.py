@@ -2,8 +2,14 @@
 # -*- coding: utf8 -*-
 from distutils.core import setup
 
-import sys
+import os, sys
 reload(sys).setdefaultencoding("UTF-8")
+
+def read(fname):
+    try:
+        return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    except:
+        return ''
 
 setup(
     name='django-webodt',
@@ -14,7 +20,7 @@ setup(
     url='http://github.com/netangels/django-webodt',
     license = 'BSD License',
     description = u'ODF template handler and odt to html, pdf, doc, etc converter',
-    long_description = open('README.rst').read().decode('utf8'),
+    long_description = read('README.rst'),
     install_requires = [
         'Django',
         'lxml',
