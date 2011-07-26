@@ -1,7 +1,7 @@
 **django-webodt** is a django module which aims to create documents in various
 formats from Open Document templates (odt). Django-webodt supports virtually
 all formats supported by chosen backend tool. We have positive experience of
-creating PDF, HTML, RDF and MS Word (.doc) documents.
+creating PDF, HTML, RTF and MS Word (.doc) documents.
 
 Document conversion is performed with help of external tools, each of which is
 served by its own backend. Currently there are three built-in backends:

@@ -1,11 +1,11 @@
 django-webodt
 ==============
 
-**django-webodt** is a django module which aims to create documents in various
+**django-webodt** is a Django module which aims to create documents in various
 formats from Open Document templates (odt) and HTML templates.
 
-Module contains three backends which allow you to use abiword, OpenOffice or
-Google Docs for conversion purposes.
+You can convert documents to PDF, DOC and more with help of AbiWord, OpenOffice
+or Google Docs backends.
 
 If you want to try it out, we encourage you to read :doc:`quickstart` before.
 To get to know more feel free to address to the API and backend documentation.
@@ -17,6 +17,9 @@ backend work.
    :maxdepth: 2
 
    quickstart
-   options
    api
+   options
+   tables
    backends
+   html_templates
+   tips_and_tricks
