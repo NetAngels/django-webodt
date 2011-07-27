@@ -41,6 +41,11 @@ required only for the particular backend.
 |                                      |                                                                 |                                                     |
 |                                      |                                                                 |                                                     |
 +--------------------------------------+-----------------------------------------------------------------+-----------------------------------------------------+
+|``WEBODT_TMP_DIR``                    | ``None``                                                        | Directory to store ODF files after template         |
+|                                      |                                                                 | rendering and PDF, DOC et al after conversion.      |
+|                                      |                                                                 | None value means "default system temp directory".   |
+|                                      |                                                                 |                                                     |
++--------------------------------------+-----------------------------------------------------------------+-----------------------------------------------------+
 |``WEBODT_ODF_TEMPLATE_PREPROCESSORS`` |                                                                 | List of webodt template preprocessors               |
 |                                      | - webodt.preprocessors.xmlfor_preprocessor,                     |                                                     |
 |                                      | - webodt.preprocessors.unescape_templatetags_preprocessor       |                                                     |

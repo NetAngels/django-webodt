@@ -14,7 +14,7 @@ import shutil
 import time
 from django.template import Template
 from django.utils.encoding import smart_str
-from webodt.conf import WEBODT_TEMPLATE_PATH, WEBODT_ODF_TEMPLATE_PREPROCESSORS
+from webodt.conf import WEBODT_TEMPLATE_PATH, WEBODT_ODF_TEMPLATE_PREPROCESSORS, WEBODT_TMP_DIR
 from webodt.preprocessors import list_preprocessors
 
 
@@ -43,7 +43,7 @@ class HTMLTemplate(object):
         template = Template(self.get_content())
         content = template.render(context)
         # create and return .html file
-        _, tmpfile = tempfile.mkstemp(suffix='.html')
+        _, tmpfile = tempfile.mkstemp(suffix='.html', dir=WEBODT_TMP_DIR)
         fd = open(tmpfile, 'w')
         fd.write(smart_str(content))
         fd.close()
@@ -100,7 +100,7 @@ class ODFTemplate(object):
         content_fd.write(smart_str(content_xml))
         content_fd.close()
         # create .odt file
-        _, tmpfile = tempfile.mkstemp(suffix='.odt')
+        _, tmpfile = tempfile.mkstemp(suffix='.odt', dir=WEBODT_TMP_DIR)
         tmpzipfile = zipfile.ZipFile(tmpfile, 'w')
         for root, _, files in os.walk(tmpdir):
             for fn in files:
