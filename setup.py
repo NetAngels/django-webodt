@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='django-webodt',
-    version='0.2',
+    version='0.3',
     author='NetAngels',
     author_email='info@netangels.ru',
     packages=['webodt', 'webodt.converters',],
