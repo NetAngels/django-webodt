@@ -46,7 +46,7 @@ class GoogleDocsODFConverter(ODFConverter):
         headers = {
             'GData-Version': '3.0',
             'Authorization': 'GoogleLogin auth=%s' % self.auth_token,
-            'Content-Length': len(data),
+            'Content-Length': str(len(data)),
             'Content-Type': document.content_type,
             'Slug': '%s.%s' % (uuid.uuid4(), document.format),
         }

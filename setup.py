@@ -13,10 +13,10 @@ def read(fname):
 
 setup(
     name='django-webodt',
-    version='0.3',
+    version='0.3.1',
     author='NetAngels',
     author_email='info@netangels.ru',
-    packages=['webodt', 'webodt.converters',],
+    packages=['webodt', 'webodt.converters', 'webodt.tests'],
     url='http://github.com/netangels/django-webodt',
     license = 'BSD License',
     description = u'ODF template handler and odt to html, pdf, doc, etc converter',
