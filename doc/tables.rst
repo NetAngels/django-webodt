@@ -53,6 +53,10 @@ gets the template source and then replaces ``{% xmlfor ... %} ... {% endxmlfor %
 psuedo tags with ``{% for ... %}...{% endfor %}`` ones placing those new tags
 exactly where you would expect them to find.
 
+.. note::
+    If something goes wrong you can check the contents of an attribute called `template_contet`. 
+    It is available **only after calling a render method**.
+
 The output will look like presented below.
 
 .. image:: _static/xmlfor_output.png

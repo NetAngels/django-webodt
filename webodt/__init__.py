@@ -93,6 +93,7 @@ class ODFTemplate(object):
         template_content = self.get_content_xml()
         for preprocess_func in list_preprocessors(self.preprocessors):
             template_content = preprocess_func(template_content)
+        self.template_content = template_content
         template = Template(template_content)
         content_xml = template.render(context)
         content_filename = os.path.join(tmpdir, 'content.xml')
