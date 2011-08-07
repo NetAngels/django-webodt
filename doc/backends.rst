@@ -83,3 +83,37 @@ downloads it in a desired format and finally removes the temporary document.
 
 To use the backend it's necessary to have a google account and to set up
 ``WEBODT_GOOGLEDOCS_EMAIL`` and ``WEBODT_GOOGLEDOCS_PASSWORD`` options.
+
+
+
+:mod:`openoffice_pdf` -- CUPS PDF printer with OpenOffice backend
+-----------------------------------------------------------------
+
+Backend name::
+    
+    WEBODT_CONVERTER = 'webodt.converters.openoffice_pdf.OpenOfficePDFConverter'
+
+If your goal is to produce **only PDF files** from your ODF templates 
+and want to use OpenOffice to render your documents and you can't bring up 
+the OpenOffice server than this backend is something that might help.
+
+This backend takes advantage of a CUPS-PDF printer (or any other PDF printer) and ability of OpenOffice to print
+documents silently from command line. To use it you have to set three things:
+
+1. Install CUPS-PDF printer (or any other PDF based printer). 
+   For example like::
+     sudo apt-get install cups-pdf
+
+   and set it's name under the ``WEBODT_OPENOFFICE_PDF_PRINTER`` option (the default is ``PDF``).
+
+2. Check the configuration of an output directory of your printer and put it in the 
+   ``WEBODT_OPENOFFICE_PDF_PRINTER_OUT`` setting (the default is ``/tmp/PDF``).
+   In Linux you can change the CUPS-PDF configuration and edit the ``Out`` section in ``/etc/cups/cups-pdf.conf``
+   to match with your webodt settings.
+
+3. Set the option ``WEBODT_OPENOFFICE_COMMAND``. It is a command (or a path to executable) which fires up
+   OpenOffice (the default is ``soffice``).
+
+Remember that this backend only converts documents to PDFs, so conversion to any other format will end up with 
+a ValueError.
+

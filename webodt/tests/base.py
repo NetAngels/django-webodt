@@ -2,12 +2,12 @@
 from django.template import Context
 from django.utils import unittest
 from webodt.converters.abiword import AbiwordODFConverter
-from webodt.converters.googledocs import GoogleDocsODFConverter
 from webodt.converters.openoffice import OpenOfficeODFConverter
+from webodt.converters.openoffice_pdf import OpenOfficePDFConverter
+from webodt.converters.googledocs import GoogleDocsODFConverter
 import datetime
 import os
 import webodt
-
 
 class ODFTemplateTest(unittest.TestCase):
 
@@ -135,3 +135,22 @@ class GoogleDocsODFConverterTest(_ConverterTest, unittest.TestCase):
 
 class OpenOfficeODFConverterTest(_ConverterTest, unittest.TestCase):
     Converter = OpenOfficeODFConverter
+
+class OpenOfficePDFConverterTest(unittest.TestCase):
+    context = {
+        'username': 'John Doe',
+        'balance': 10.01
+    }
+    Converter = OpenOfficePDFConverter
+
+    def test_converter(self):
+        template = webodt.ODFTemplate('sample.odt')
+        document = template.render(Context(self.context))
+        converter = self.Converter()
+        pdf_document = converter.convert(document, 'pdf')
+        self.assertTrue(os.path.isfile(pdf_document.name))
+        document.close()
+        pdf_document.close()
+        self.assertFalse(os.path.isfile(document.name))
+        self.assertFalse(os.path.isfile(pdf_document.name))
+
