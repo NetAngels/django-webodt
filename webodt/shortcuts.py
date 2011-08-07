@@ -56,7 +56,7 @@ def render_to(format, template_name,
 
 def render_to_response(template_name,
         dictionary=None, context_instance=None, filename=None, format='odt',
-        cache=CacheManager, preprocessors=None, inline=None
+        cache=CacheManager, preprocessors=None, inline=None, serve=None
     ):
     """
     Using same options as `render_to`, return `django.http.HttpResponse`
@@ -67,7 +67,13 @@ def render_to_response(template_name,
     content_fd = render_to(format, template_name, dictionary, context_instance,
         delete_on_close=True, cache=cache, preprocessors=preprocessors
     )
-    response = HttpResponse(_ifile(content_fd), mimetype=mimetype)
+    if serve is None:
+        serve = True
+    if serve:
+        content = _ifile(content_fd)
+    else:
+        content = content_fd.read()
+    response = HttpResponse(content, mimetype=mimetype)
     if not filename:
         filename = os.path.basename(template_name)
         filename += '.%s' % format

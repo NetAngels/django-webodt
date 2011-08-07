@@ -38,7 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'sample.urls'
+ROOT_URLCONF = 'webodt_sample.urls'
 
 TEMPLATE_DIRS = (
 )

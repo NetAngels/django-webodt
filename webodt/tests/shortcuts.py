@@ -1,6 +1,8 @@
 # -*- coding: utf8 -*-
+from django.test.client import Client
 from django.utils import unittest
 from webodt.shortcuts import render_to, render_to_response
+from django.core.urlresolvers import reverse
 
 class RenderToTest(unittest.TestCase):
 
@@ -32,3 +34,10 @@ class RenderToTest(unittest.TestCase):
         response = render_to_response('sample.odt', dictionary=context,
                                       format='html')
         self.assertTrue('John Doe' in response.content)
+
+    def test_render_to_response_in_view(self):
+        client = Client()
+        path = reverse('webodt-test-pdf')
+        response = client.get(path)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.content))
