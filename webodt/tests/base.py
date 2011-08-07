@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
-from django.utils import unittest
-import webodt
 from django.template import Context
+from django.utils import unittest
 from webodt.converters.abiword import AbiwordODFConverter
-from webodt.converters.openoffice import OpenOfficeODFConverter
 from webodt.converters.googledocs import GoogleDocsODFConverter
+from webodt.converters.openoffice import OpenOfficeODFConverter
+import datetime
+import os
+import webodt
 
 
 class ODFTemplateTest(unittest.TestCase):
@@ -104,6 +105,13 @@ class _ConverterTest(object):
         html_document.close()
         self.assertFalse(os.path.isfile(document.name))
         self.assertFalse(os.path.isfile(html_document.name))
+
+    def test_convert_utf8(self):
+        template = webodt.ODFTemplate('russian_sample.odt')
+        document = template.render(Context({'ts': datetime.datetime.now()}))
+        converter = self.Converter()
+        pdf_document = converter.convert(document, 'pdf')
+        pdf_document.read()
 
     def test_html_converter(self):
         template = webodt.HTMLTemplate('sample.html')
