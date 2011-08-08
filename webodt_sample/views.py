@@ -9,3 +9,11 @@ def test_pdf(request):
         dictionary=context, format='pdf', filename='test.pdf',
         context_instance=RequestContext(request)
     )
+
+def test_iterator(request):
+    iterator = request.GET.get('iterator') == 'true'
+    context = {'username': 'John Doe', 'balance': 10.01}
+    return render_to_response('sample.odt',
+        dictionary=context, format='html', filename='test.html',
+        iterator=iterator,
+    )

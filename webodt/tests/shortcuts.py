@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+from django.conf import settings
 from django.test.client import Client
 from django.utils import unittest
 from webodt.shortcuts import render_to, render_to_response
@@ -41,3 +42,28 @@ class RenderToTest(unittest.TestCase):
         response = client.get(path)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.content))
+
+
+class RenderToResponseIteratorTest(unittest.TestCase):
+    """
+    Render to response with iterator sometimes fails because middlewares eat
+    response content. See Django ticket #6527 for more details.
+
+    CommonMiddleware with settings.USE_ETAGS = True reproduces such an issue.
+    """
+    def setUp(self):
+        self._etags = settings.USE_ETAGS
+        settings.USE_ETAGS = True
+
+    def tearDown(self):
+        settings.USE_ETAGS = self._etags
+
+    def test_render_to_response(self):
+        client = Client()
+        path = reverse('webodt-test-iterator')
+        # iterator turned on
+        response = client.get(path + '?iterator=true')
+        self.assertEqual(len(response.content), 0)
+        # iterator turned off
+        response = client.get(path + '?iterator=false')
+        self.assertTrue('John Doe' in  response.content)
