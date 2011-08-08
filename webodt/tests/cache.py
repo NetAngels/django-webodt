@@ -11,6 +11,7 @@ class CacheManagerTest(unittest.TestCase):
 
     def setUp(self):
         self.cache_manager = CacheManager()
+        self.cache_manager.clear()
         self.converter = converter()
 
     def test_manager(self):
