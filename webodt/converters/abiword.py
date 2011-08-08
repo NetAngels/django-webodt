@@ -4,8 +4,6 @@ from webodt.converters import ODFConverter
 from webodt import Document
 from webodt.conf import WEBODT_ABIWORD_COMMAND
 
-WEBODT_ABIWORD_COMMAND = ['/usr/bin/abiword', '--plugin', 'AbiCommand']
-
 class AbiwordODFConverter(ODFConverter):
 
 
