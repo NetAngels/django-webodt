@@ -14,24 +14,23 @@ def render_to(format, template_name,
         cache=CacheManager, preprocessors=None
     ):
     """
-    Convert the template given by `template_name` and `dictionary` to a
-    document in given `format`. The document (file-like object) will be
-    returned.
+    Convert the template given by :attr:`template_name` and :attr:`dictionary`
+    to a document in given :attr:`format`. The document (file-like object) will
+    be returned.
 
-    `format` is the filename extension. It's possible to use "odt", "pdf",
-    "doc", "html" or "rtf" and probably more.
+    :keyword format: Filename extension. It's possible to use "odt", "pdf",
+                     "doc", "html" or "rtf" and probably more.
 
-    `context_instance` is the optional parameter which should contain
-    instance of the subclass of `django.template.Context`.
+    :keyword context_instance: Optional parameter which should contain instance
+                               of the subclass of `django.template.Context`.
 
-    `delete_on_close` defines whether the returned document should be deleted
-    automatically when closed.
+    :keyword delete_on_close: Flag which defines whether the returned document
+                              should be deleted automatically when closed.
 
-    `preprocessors` is a list of preprocessors overriding
-    ``WEBODT_ODF_TEMPLATE_PREPROCESSORS`` settings variable.
-    Suitable for ODF documents only.
+    :keyword preprocessors: List of preprocessors overriding :attr:`WEBODT_ODF_TEMPLATE_PREPROCESSORS`
+                            settings variable.  Suitable for ODF documents only.
 
-    If the `template_name` ends with `.html`, template is considered as HTML
+    If the :attr:`template_name` ends with ".html", template is considered as HTML
     template, otherwise as ODF based template.
     """
     template = _Template(template_name, preprocessors=preprocessors)
@@ -56,20 +55,27 @@ def render_to(format, template_name,
 
 def render_to_response(template_name,
         dictionary=None, context_instance=None, filename=None, format='odt',
-        cache=CacheManager, preprocessors=None, inline=None, serve=None
+        cache=CacheManager, preprocessors=None, inline=None, iterator=False,
     ):
     """
-    Using same options as `render_to`, return `django.http.HttpResponse`
-    object. The document is automatically removed when the last byte of the
-    response is read.
+    Using same options as :func:`render_to`, return :class:`django.http.HttpResponse`
+    object. The document is automatically removed after the last byte of the
+    response have been read.
+
+    :keyword iterator: is a flag which determines whether returned
+                       :class:`HttpResponse` object should be initialized with
+                       a string or with an iterator.
+
+    Consider using iterator if you tend to send large documents only, otherwise
+    set this flag to :const:`False`. Be aware that some middlewares can "eat"
+    your iterator-based HTTP responses. See `Ticket #6527
+    <https://code.djangoproject.com/ticket/6527>`_ for more details.
     """
     mimetype = get_mimetype(format)
     content_fd = render_to(format, template_name, dictionary, context_instance,
         delete_on_close=True, cache=cache, preprocessors=preprocessors
     )
-    if serve is None:
-        serve = True
-    if serve:
+    if iterator:
         content = _ifile(content_fd)
     else:
         content = content_fd.read()
