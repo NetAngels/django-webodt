@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 # default converter
 WEBODT_CONVERTER = 'webodt.converters.abiword.AbiwordODFConverter'
@@ -18,4 +19,6 @@ WEBODT_GOOGLEDOCS_EMAIL = 'myaccount@gmail.com'
 WEBODT_GOOGLEDOCS_PASSWORD = 'mypassword'
 # OpenOfficeODFConverter settings. Address of the OpenOffice server
 WEBODT_OPENOFFICE_SERVER = ('localhost', 2002)
-
+# OpenOfficePDFConverter settings. Path should match "Out" variable in
+# /etc/cups/cups-pdf.conf file
+WEBODT_OPENOFFICE_PDF_PRINTER_OUT = os.path.expanduser('~/PDF')
