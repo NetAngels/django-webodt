@@ -113,6 +113,17 @@ class _ConverterTest(object):
         pdf_document = converter.convert(document, 'pdf')
         pdf_document.read()
 
+    def test_header_and_footer(self):
+        """ Check that data in header and footer are handled correctly """
+        template = webodt.ODFTemplate('header_sample.odt')
+        document = template.render(Context(self.context))
+        converter = self.Converter()
+        html_document = converter.convert(document, 'html')
+        html_data = html_document.read()
+        self.assertTrue('John Doe' in html_data)
+        document.close()
+        html_document.close()
+
     def test_html_converter(self):
         template = webodt.HTMLTemplate('sample.html')
         document = template.render(Context(self.context), delete_on_close=False)
