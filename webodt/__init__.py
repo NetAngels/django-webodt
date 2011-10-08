@@ -84,6 +84,10 @@ class ODFTemplate(object):
         """ Return the content.xml file contents """
         return self.handler.get_content_xml()
 
+    def get_styles_xml(self):
+        """ Return the styles.xml file contents """
+        return self.handler.get_styles_xml()
+
     def render(self, context, delete_on_close=True):
         """ Return rendered ODF (webodt.ODFDocument instance)"""
         # create temp output directory
@@ -99,6 +103,16 @@ class ODFTemplate(object):
         content_filename = os.path.join(tmpdir, 'content.xml')
         content_fd = open(content_filename, 'w')
         content_fd.write(smart_str(content_xml))
+        content_fd.close()
+        # store updated styles.xml
+        template_content = self.get_styles_xml()
+        for preprocess_func in list_preprocessors(self.preprocessors):
+            template_content = preprocess_func(template_content)
+        template = Template(template_content)
+        styles_xml = template.render(context)
+        content_filename = os.path.join(tmpdir, 'styles.xml')
+        content_fd = open(content_filename, 'w')
+        content_fd.write(smart_str(styles_xml))
         content_fd.close()
         # create .odt file
         _, tmpfile = tempfile.mkstemp(suffix='.odt', dir=WEBODT_TMP_DIR)
@@ -127,6 +141,12 @@ class _PackedODFHandler(object):
         fd.close()
         return data
 
+    def get_styles_xml(self):
+        fd = zipfile.ZipFile(self.filename)
+        data = fd.read('styles.xml')
+        fd.close()
+        return data
+
     def unpack(self, dstdir):
         fd = zipfile.ZipFile(self.filename)
         fd.extractall(path=dstdir)
@@ -140,6 +160,12 @@ class _UnpackedODFHandler(object):
 
     def get_content_xml(self):
         fd = open(os.path.join(self.dirname, 'content.xml'), 'r')
+        data = fd.read()
+        fd.close()
+        return data
+
+    def get_styles_xml(self):
+        fd = open(os.path.join(self.dirname, 'styles.xml'), 'r')
         data = fd.read()
         fd.close()
         return data
@@ -182,5 +208,11 @@ class ODFDocument(Document):
     def get_content_xml(self):
         fd = zipfile.ZipFile(self.name)
         data = fd.read('content.xml')
+        fd.close()
+        return data
+
+    def get_styles_xml(self):
+        fd = zipfile.ZipFile(self.name)
+        data = fd.read('styles.xml')
         fd.close()
         return data
