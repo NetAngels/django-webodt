@@ -16,8 +16,10 @@ without extensive manual learning.
 
 If you try to unzip odt document, you will find a set of files like
 `content.xml`, `manifest.rdf`, `meta.xml` and so on inside. Usually,
-`content.xml` is the biggest file with all the content. Other files can be
-considered as auxiliaries.
+`content.xml` is the biggest file with all the content. The other file you can
+probably be interested in is `styles.xml` which sometimes contains the contents
+of the header and footer of a document.  Other files can be considered as
+auxiliaries.
 
 Although ordinary XML, content.xml is not very convenient to observe, because
 usually word processors don't insert line wraps between tags. One of the
@@ -40,9 +42,9 @@ After that and throwing out all XML redundance, you see something like this::
 
 Finally, this is the template, ready to modify and use. You can apply all
 Django filters and tags inside, create loops, conditionals, etc. Behind the
-scene webodt unpacks .odt file, parse `content.xml` with Django template
-processor, zip everything back and then, if needed, passes resulting document
-through the backend to get the document in other format.
+scene webodt unpacks .odt file, parse `content.xml` and `styles.xml` with
+Django template processor, zip everything back and then, if needed, passes
+resulting document through the backend to get the document in other format.
 
 Template inheritance
 --------------------
