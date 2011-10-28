@@ -84,6 +84,10 @@ class ODFTemplate(object):
         """ Return the content.xml file contents """
         return self.handler.get_content_xml()
 
+    def get_meta_xml(self):
+        """ Return the meta.xml file contents """
+        return self.handler.get_meta_xml()
+
     def get_styles_xml(self):
         """ Return the styles.xml file contents """
         return self.handler.get_styles_xml()
@@ -103,6 +107,16 @@ class ODFTemplate(object):
         content_filename = os.path.join(tmpdir, 'content.xml')
         content_fd = open(content_filename, 'w')
         content_fd.write(smart_str(content_xml))
+        content_fd.close()
+        # store updated meta.xml
+        template_content = self.get_meta_xml()
+        for preprocess_func in list_preprocessors(self.preprocessors):
+            template_content = preprocess_func(template_content)
+        template = Template(template_content)
+        meta_xml = template.render(context)
+        content_filename = os.path.join(tmpdir, 'meta.xml')
+        content_fd = open(content_filename, 'w')
+        content_fd.write(smart_str(meta_xml))
         content_fd.close()
         # store updated styles.xml
         template_content = self.get_styles_xml()
@@ -141,6 +155,12 @@ class _PackedODFHandler(object):
         fd.close()
         return data
 
+    def get_meta_xml(self):
+        fd = zipfile.ZipFile(self.filename)
+        data = fd.read('meta.xml')
+        fd.close()
+        return data
+
     def get_styles_xml(self):
         fd = zipfile.ZipFile(self.filename)
         data = fd.read('styles.xml')
@@ -160,6 +180,12 @@ class _UnpackedODFHandler(object):
 
     def get_content_xml(self):
         fd = open(os.path.join(self.dirname, 'content.xml'), 'r')
+        data = fd.read()
+        fd.close()
+        return data
+
+    def get_meta_xml(self):
+        fd = open(os.path.join(self.dirname, 'meta.xml'), 'r')
         data = fd.read()
         fd.close()
         return data
@@ -208,6 +234,12 @@ class ODFDocument(Document):
     def get_content_xml(self):
         fd = zipfile.ZipFile(self.name)
         data = fd.read('content.xml')
+        fd.close()
+        return data
+
+    def get_meta_xml(self):
+        fd = zipfile.ZipFile(self.name)
+        data = fd.read('meta.xml')
         fd.close()
         return data
 
