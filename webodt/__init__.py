@@ -12,6 +12,8 @@ import zipfile
 import tempfile
 import shutil
 import time
+from lxml import etree
+from cStringIO import StringIO
 from django.template import Template
 from django.utils.encoding import smart_str
 from webodt.conf import WEBODT_TEMPLATE_PATH, WEBODT_ODF_TEMPLATE_PREPROCESSORS, WEBODT_TMP_DIR
@@ -92,43 +94,34 @@ class ODFTemplate(object):
         """ Return the styles.xml file contents """
         return self.handler.get_styles_xml()
 
+    def get_file(self,path):
+        return self.handler.get_file(path)
+
+    def get_files_to_process(self):
+        #parse manifest
+        paths = []
+        ee = etree.parse(StringIO(self.get_file("META-INF/manifest.xml")))
+        for xml_ref in ee.findall("//{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}file-entry[@{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}media-type='text/xml']"):
+            paths.append(xml_ref.attrib['{urn:oasis:names:tc:opendocument:xmlns:manifest:1.0}full-path'])
+        return paths
+
     def render(self, context, delete_on_close=True):
         """ Return rendered ODF (webodt.ODFDocument instance)"""
         # create temp output directory
         tmpdir = tempfile.mkdtemp()
         self.handler.unpack(tmpdir)
         # store updated content.xml
-        template_content = self.get_content_xml()
-        for preprocess_func in list_preprocessors(self.preprocessors):
-            template_content = preprocess_func(template_content)
-        self.template_content = template_content
-        template = Template(template_content)
-        content_xml = template.render(context)
-        content_filename = os.path.join(tmpdir, 'content.xml')
-        content_fd = open(content_filename, 'w')
-        content_fd.write(smart_str(content_xml))
-        content_fd.close()
-        # store updated meta.xml
-        template_content = self.get_meta_xml()
-        for preprocess_func in list_preprocessors(self.preprocessors):
-            template_content = preprocess_func(template_content)
-        template = Template(template_content)
-        meta_xml = template.render(context)
-        content_filename = os.path.join(tmpdir, 'meta.xml')
-        content_fd = open(content_filename, 'w')
-        content_fd.write(smart_str(meta_xml))
-        content_fd.close()
-        # store updated styles.xml
-        template_content = self.get_styles_xml()
-        for preprocess_func in list_preprocessors(self.preprocessors):
-            template_content = preprocess_func(template_content)
-        template = Template(template_content)
-        styles_xml = template.render(context)
-        content_filename = os.path.join(tmpdir, 'styles.xml')
-        content_fd = open(content_filename, 'w')
-        content_fd.write(smart_str(styles_xml))
-        content_fd.close()
-        # create .odt file
+        for f_to_process in self.get_files_to_process():
+            template = self.get_file(f_to_process)
+            for preprocess_func in list_preprocessors(self.preprocessors):
+                template = preprocess_func(template)
+            template = Template(template)
+            xml_result = template.render(context)
+            filename = os.path.join(tmpdir, f_to_process)
+            result_fd = open(filename, 'w')
+            result_fd.write(smart_str(xml_result))
+            result_fd.close()
+
         _, tmpfile = tempfile.mkstemp(suffix='.odt', dir=WEBODT_TMP_DIR)
         tmpzipfile = zipfile.ZipFile(tmpfile, 'w')
         for root, _, files in os.walk(tmpdir):
@@ -167,6 +160,12 @@ class _PackedODFHandler(object):
         fd.close()
         return data
 
+    def get_file(self, path):
+        fd = zipfile.ZipFile(self.filename)
+        data = fd.read(path)
+        fd.close()
+        return data
+
     def unpack(self, dstdir):
         fd = zipfile.ZipFile(self.filename)
         fd.extractall(path=dstdir)
@@ -192,6 +191,12 @@ class _UnpackedODFHandler(object):
 
     def get_styles_xml(self):
         fd = open(os.path.join(self.dirname, 'styles.xml'), 'r')
+        data = fd.read()
+        fd.close()
+        return data
+
+    def get_file(self,path):
+        fd = open(os.path.join(self.dirname, path), 'r')
         data = fd.read()
         fd.close()
         return data
