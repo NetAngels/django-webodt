@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import tempfile
 from django.utils.importlib import import_module
 from webodt.conf import WEBODT_DEFAULT_FORMAT, WEBODT_CONVERTER, WEBODT_TMP_DIR
@@ -44,5 +45,6 @@ class ODFConverter(object):
             format = WEBODT_DEFAULT_FORMAT
         # filename is undefined
         if not filename:
-            _, filename = tempfile.mkstemp(suffix = '.' + format, dir=WEBODT_TMP_DIR)
+            lowlevel_fd, filename = tempfile.mkstemp(suffix = '.' + format, dir=WEBODT_TMP_DIR)
+            os.close(lowlevel_fd)
         return filename, format

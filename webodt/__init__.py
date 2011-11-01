@@ -45,7 +45,8 @@ class HTMLTemplate(object):
         template = Template(self.get_content())
         content = template.render(context)
         # create and return .html file
-        _, tmpfile = tempfile.mkstemp(suffix='.html', dir=WEBODT_TMP_DIR)
+        lowlevel_fd, tmpfile = tempfile.mkstemp(suffix='.html', dir=WEBODT_TMP_DIR)
+        os.close(lowlevel_fd)
         fd = open(tmpfile, 'w')
         fd.write(smart_str(content))
         fd.close()
@@ -122,7 +123,8 @@ class ODFTemplate(object):
             result_fd.write(smart_str(xml_result))
             result_fd.close()
 
-        _, tmpfile = tempfile.mkstemp(suffix='.odt', dir=WEBODT_TMP_DIR)
+        lowlevel_fd, tmpfile = tempfile.mkstemp(suffix='.odt', dir=WEBODT_TMP_DIR)
+        os.close(lowlevel_fd)
         tmpzipfile = zipfile.ZipFile(tmpfile, 'w')
         for root, _, files in os.walk(tmpdir):
             for fn in files:
