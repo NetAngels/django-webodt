@@ -40,15 +40,14 @@ def render_to(format, template_name,
     else:
         context_instance = Context(dictionary)
     document = template.render(context_instance, delete_on_close=delete_on_close)
-    if format == 'odt':
-        return document
     formatted_document = None
     if cache:
         cache_mgr = cache()
         formatted_document = cache_mgr.get(document, format)
     if not formatted_document:
         formatted_document = converter().convert(document, format, delete_on_close=delete_on_close)
-        cache_mgr.set(document, format, formatted_document)
+        if cache:
+            cache_mgr.set(document, format, formatted_document)
     document.close()
     return formatted_document
 
