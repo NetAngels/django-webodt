@@ -20,7 +20,9 @@ class XHTML2PDFConverter(object):
         input_filename = document.name
         output_file = open(output_filename, 'wb')
 
-        result = pisa.pisaDocument(input_file, output_file, path=input_filename)
+        result = pisa.pisaDocument(
+            input_file, output_file, path=input_filename, encoding='UTF-8',
+        )
 
         output_file.close()
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+import uno
+import unohelper
 from com.sun.star.beans import PropertyValue
 from com.sun.star.io import IOException, XOutputStream, XSeekable, XInputStream
 from webodt import Document
 from webodt.conf import WEBODT_OPENOFFICE_SERVER
 from webodt.converters import ODFConverter
 from webodt.helpers import guess_format_and_filename
-import uno
-import unohelper
 
 OOO_CONNECTION = 'socket,host=%s,port=%s;urp;StarOffice.ComponentContext' % WEBODT_OPENOFFICE_SERVER
 
