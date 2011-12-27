@@ -4,6 +4,7 @@ from django.utils import unittest
 from webodt.converters.abiword import AbiwordODFConverter
 from webodt.converters.googledocs import GoogleDocsODFConverter
 from webodt.converters.openoffice import OpenOfficeODFConverter
+from webodt.converters.xhtml2pdf_converter import XHTML2PDFConverter
 import datetime
 import os
 import webodt
@@ -136,6 +137,7 @@ class _ConverterTest(object):
         odt_document.close()
         odt_document.delete()
 
+
 class AbiwordODFConverterTest(_ConverterTest, unittest.TestCase):
     Converter = AbiwordODFConverter
 
@@ -146,3 +148,20 @@ class GoogleDocsODFConverterTest(_ConverterTest, unittest.TestCase):
 
 class OpenOfficeODFConverterTest(_ConverterTest, unittest.TestCase):
     Converter = OpenOfficeODFConverter
+
+
+class XHTML2PDFConverterTest(unittest.TestCase):
+
+    def test_html_converter(self):
+        context = {
+            'username': 'John Doe',
+            'balance': 10.01
+        }
+        template = webodt.HTMLTemplate('sample.html')
+        document = template.render(Context(context), delete_on_close=False)
+        converter = XHTML2PDFConverter()
+        pdf_document = converter.convert(document, 'pdf', delete_on_close=False)
+        document.close()
+        document.delete()
+        pdf_document.close()
+        pdf_document.delete()
