@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-import urllib, urllib2, uuid
-from lxml import etree
 from cStringIO import StringIO
+from lxml import etree
 from webodt import Document
-from webodt.converters import ODFConverter
-
 from webodt.conf import WEBODT_GOOGLEDOCS_EMAIL, WEBODT_GOOGLEDOCS_PASSWORD
+from webodt.converters import ODFConverter
+from webodt.helpers import guess_format_and_filename
+import urllib
+import urllib2
+import uuid
 
 AUTH_URL = 'https://www.google.com/accounts/ClientLogin'
 
@@ -39,7 +41,7 @@ class GoogleDocsODFConverter(ODFConverter):
     def convert(self, document, format=None, output_filename=None, delete_on_close=True):
         # opener = urllib2.build_opener(urllib2.HTTPSHandler(debuglevel=1))
         # urllib2.urlopen = opener.open
-        output_filename, format = self._guess_format_and_filename(output_filename, format)
+        output_filename, format = guess_format_and_filename(output_filename, format)
         # upload document
         url = 'https://docs.google.com/feeds/default/private/full'
         data = document.read()

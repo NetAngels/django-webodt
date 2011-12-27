@@ -26,25 +26,10 @@ class ODFConverter(object):
     def convert(self, document, format=None, output_filename=None, delete_on_close=True):
         """ convert document and return file-like object representing output
         document """
+        if format == 'odt':
+            return document
         raise NotImplementedError("Should be implemented in subclass")
 
-    def _guess_format_and_filename(self, filename, format):
-        """ guess format and filename of the output document
 
-        Either format and filename or both can be undefined (None) variables.
-        Function determines undefined variables on basis of file extension or
-        default values. If needed, temporary file will be created and returned.
-
-        @return: tuple of strings (filename, format)
-        """
-        # filename is defined, format is undefined
-        if filename and '.' in filename and not format:
-            format = filename.split('.')[-1]
-        # format is undefined
-        if not format:
-            format = WEBODT_DEFAULT_FORMAT
-        # filename is undefined
-        if not filename:
-            lowlevel_fd, filename = tempfile.mkstemp(suffix = '.' + format, dir=WEBODT_TMP_DIR)
-            os.close(lowlevel_fd)
-        return filename, format
+class ConverterError(Exception):
+    pass

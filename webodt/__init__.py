@@ -214,13 +214,13 @@ class Document(file):
         file.__init__(self, filename, mode, buffering)
         self.delete_on_close = delete_on_close
 
-    def delete(self):
-        os.unlink(self.name)
-
     def close(self):
         file.close(self)
         if self.delete_on_close:
             self.delete()
+
+    def delete(self):
+        os.unlink(self.name)
 
 
 class HTMLDocument(Document):
