@@ -22,7 +22,7 @@ to install abiword and make sure that it can be lauched with
 ``WEBODT_ABIWORD_COMMAND``.
 
 
-:mod:`openoffice` -- OpenOffice backend
+:mod:`openoffice` -- OpenOffice/LibreOffice backend
 ----------------------------------------------------------------
 
 Backend name::
@@ -30,16 +30,23 @@ Backend name::
     WEBODT_CONVERTER = 'webodt.converters.openoffice.OpenOfficeODFConverter'
 
 This is the most powerful and the heaviest backend. First before the OpenOffice
-should be launched as a daemon listening a TCP port for connections (in
-headless mode). Headless mode of OpenOffice is a regime of working such that
+or the LibreOffice should be launched as a daemon listening a TCP port for
+connections (in headless mode). Headless mode is a regime of working such that
 office detaches itself from console, doesn't open any windows and just starts
-haindling incoming requests from other applications.
+handling incoming requests from other applications.
 
-All you have to do is to choose appropriate network interface (usually you'd
-like to bind OpenOffice to loopback) and port (up to your choice, for
-example, 2002) to listen to and then type something like this::
+You can lanuch office application with help a management command, which is
+basically a thin wrapper around "os.execv". To bind office to localhost, port
+2002, type::
 
-    soffice '-accept=socket,host=127.0.0.1,port=2002;urp;StarOffice.NamingService' -headless
+    ./manage.py webodt_launch_openoffice
+
+Otherwise you can launch Office manually. Then all you have to do is to choose
+appropriate network interface (usually you'd like to bind your office backend
+to loopback) and port (up to your choice, for example, 2002) to listen to and
+then type something like this::
+
+    soffice '--accept=socket,host=127.0.0.1,port=2002;urp;StarOffice.NamingService' --headless
 
 In the example above office is listening port 2002 of the loopback interface.
 You can use "0" instead of IP-address if you want to make your office to bind
@@ -48,7 +55,9 @@ to all available interfaces.
 If you work on Linux and you don't want your office process to be daemonized,
 use "soffice.bin" instead of "soffice". Ctrl+C will help you to kill running
 proccess painlessly. Usually soffice.bin is placed somewhere within
-``/usr/lib/openoffice/`` directory.
+``/usr/lib/openoffice/`` or ``/usr/lib/libreoffice`` directory. For example, the
+full path to the executable in the latest Ubuntu version is
+``/usr/lib/libreoffice/program/soffice.bin``.
 
 Once your office is launched, you have to make your application known where it
 is located by setting up ``OOFFICE_SERVER`` variable. You need to setup host and
